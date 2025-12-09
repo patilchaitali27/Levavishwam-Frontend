@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Download, FileText, File, Clock, ArrowRight } from "lucide-react";
 
 interface Document {
@@ -61,15 +62,29 @@ function getIcon(type: string) {
 }
 
 export default function DownloadsSection() {
-  const scrollToDownloadsTop = () => {
-    const el = document.getElementById("downloads");
-    if (el) window.scrollTo({ top: el.offsetTop - 88, behavior: "smooth" });
-  };
+  const [showAll, setShowAll] = useState(false);
+
+  // AUTO SCROLL TO TOP AFTER VIEW LESS
+  useEffect(() => {
+    if (!showAll) {
+      const el = document.getElementById("downloads");
+      if (el) {
+        window.scrollTo({
+          top: el.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [showAll]);
+
+  // SHOW ONLY 3 OR ALL DOCUMENTS
+  const visibleDocs = showAll ? documents : documents.slice(0, 3);
 
   return (
     <section id="downloads" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Header with linear underline */}
+
+        {/* HEADER */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Downloads
@@ -80,13 +95,16 @@ export default function DownloadsSection() {
           <div className="mx-auto w-24 h-1 rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
         </div>
 
+        {/* DOCUMENT LIST */}
         <div className="space-y-4">
-          {documents.map((doc) => (
+          {visibleDocs.map((doc) => (
             <div
               key={doc.id}
-              className="p-5 rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-white hover:shadow-lg hover:border-blue-300 transition cursor-pointer"
+              className="p-5 rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-white
+                         hover:shadow-lg hover:border-blue-300 transition cursor-pointer"
             >
               <div className="flex items-center gap-5">
+
                 <div className="p-4 bg-white rounded-lg border border-gray-200">
                   {getIcon(doc.fileType)}
                 </div>
@@ -115,16 +133,20 @@ export default function DownloadsSection() {
           ))}
         </div>
 
-        {/* View All Downloads button */}
-        <div className="text-center mt-8">
-          <button
-            onClick={scrollToDownloadsTop}
-            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
-          >
-            View All Downloads
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+        {/* VIEW MORE / VIEW LESS BUTTON */}
+        {documents.length > 3 && (
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
+                         font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+            >
+              {showAll ? "View Less" : "View All Downloads"}  
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
       </div>
     </section>
   );

@@ -1,9 +1,5 @@
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  ArrowRight,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Event {
@@ -80,6 +76,24 @@ function getStatusBadge(status: string) {
 }
 
 export default function EventsSection() {
+  const [showAll, setShowAll] = useState(false);
+
+  // Auto scroll up when collapsing view
+  useEffect(() => {
+    if (!showAll) {
+      const el = document.getElementById("events");
+      if (el) {
+        window.scrollTo({
+          top: el.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [showAll]);
+
+  // show 2 events or all
+  const visibleEvents = showAll ? events : events.slice(0, 2);
+
   return (
     <section id="events" className="py-15 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,7 +104,7 @@ export default function EventsSection() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {events.map((event) => (
+          {visibleEvents.map((event) => (
             <div
               key={event.id}
               className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 h-[350px] flex"
@@ -140,16 +154,20 @@ export default function EventsSection() {
           ))}
         </div>
 
-        <div className="text-center mt-10">
-          <a
-            href="#events-all"
-            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
+        {/* VIEW MORE / VIEW LESS BUTTON */}
+        {events.length > 2 && (
+          <div className="text-center mt-10">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                        font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
-          >
-            View All Community Events
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
+            >
+              {showAll ? "View Less" : "View All Community Events"}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
       </div>
     </section>
   );

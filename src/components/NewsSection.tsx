@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -45,20 +46,41 @@ const newsItems: NewsItem[] = [
     author: "Admin",
     category: "Education",
   },
+  {
+    id: 4,
+    title: "Fundraising Marathon Event",
+    excerpt:
+      "Community members participated in a marathon event to raise funds for the new hospital wing.",
+    image:
+      "https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg?auto=compress&cs=tinysrgb&w=600",
+    date: "Nov 20, 2024",
+    author: "Admin",
+    category: "Sports",
+  },
 ];
 
 export default function NewsSection() {
-  const SCROLL_OFFSET = 88;
+  const [showAll, setShowAll] = useState(false);
 
-  const scrollToNewsTop = () => {
-    const el = document.getElementById("news");
-    if (el)
-      window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: "smooth" });
-  };
+  // Auto-scroll UP when clicking "View Less"
+  useEffect(() => {
+    if (!showAll) {
+      const el = document.getElementById("news");
+      if (el) {
+        window.scrollTo({
+          top: el.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [showAll]);
+
+  const visibleNews = showAll ? newsItems : newsItems.slice(0, 3);
 
   return (
     <section id="news" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
+        
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
             Community News
@@ -68,29 +90,26 @@ export default function NewsSection() {
           </p>
         </div>
 
+        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
-          {newsItems.map((news) => (
+          {visibleNews.map((news) => (
             <div
               key={news.id}
               className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 h-[420px] flex flex-col"
             >
-              {/* Image */}
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={news.image}
                   alt={news.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
-
-                {/* Minimal Category */}
                 <span className="absolute top-4 left-4 px-3 py-1 text-xs font-medium rounded-lg bg-white/85 text-gray-800 border">
                   {news.category}
                 </span>
               </div>
 
-              {/* Content */}
               <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-700">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                   {news.title}
                 </h3>
 
@@ -98,13 +117,11 @@ export default function NewsSection() {
                   {news.excerpt}
                 </p>
 
-                {/* Date */}
                 <div className="flex items-center text-gray-500 text-sm border-t pt-3">
                   <Calendar className="w-4 h-4 mr-2" />
                   {news.date}
                 </div>
 
-                {/* Footer */}
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
@@ -113,7 +130,6 @@ export default function NewsSection() {
                     <span className="text-sm text-gray-700">{news.author}</span>
                   </div>
 
-                  {/* Pass entire news object to the details page */}
                   <Link
                     to={`/news/${news.id}`}
                     state={news}
@@ -127,16 +143,18 @@ export default function NewsSection() {
           ))}
         </div>
 
-        {/* View All News button (centered) */}
-        <div className="text-center">
-          <button
-            onClick={scrollToNewsTop}
-            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
-          >
-            View All News
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Toggle Button */}
+        {newsItems.length > 3 && (
+          <div className="text-center">
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+            >
+              {showAll ? "View Less" : "View More"}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
