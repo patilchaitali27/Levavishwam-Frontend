@@ -10,6 +10,8 @@ import CommitteeSection from "../components/CommitteeSection";
 import Footer from "../components/Footer";
 import InformationSection from "../components/InformationSection";
 
+import { ChevronDown } from "lucide-react";
+
 export default function Home() {
   const location = useLocation();
 
@@ -21,24 +23,42 @@ export default function Home() {
       setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
-       
           window.scrollTo({ top: el.offsetTop - 60, behavior: "smooth" });
         }
-        try { window.history.replaceState({}, document.title); } catch {}
+        try {
+          window.history.replaceState({}, document.title);
+        } catch {}
       }, 150);
     }
   }, [location]);
 
+  // Smooth scroll to News section
+  const scrollToNews = () => {
+    const section = document.getElementById("news");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div id="home">
-      
       <Navbar />
 
-      
       <div className="pt-10">
         <Carousel />
 
+        {/* ↓ SIMPLE CLEAN ARROW */}
+        <div className="w-full flex justify-center mt-6 mb-10">
+          <button
+            onClick={scrollToNews}
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition shadow-sm"
+          >
+            <ChevronDown className="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
           <NewsSection />
 
           <InformationSection />

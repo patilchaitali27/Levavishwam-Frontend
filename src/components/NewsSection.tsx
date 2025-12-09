@@ -1,4 +1,5 @@
-import { ArrowRight, Calendar, Clock, User, ChevronDown } from "lucide-react";
+import { ArrowRight, Calendar, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface NewsItem {
   id: number;
@@ -7,7 +8,6 @@ interface NewsItem {
   image: string;
   date: string;
   author: string;
-  readTime: string;
   category: string;
 }
 
@@ -21,8 +21,7 @@ const newsItems: NewsItem[] = [
       "https://images.pexels.com/photos/3184635/pexels-photo-3184635.jpeg?auto=compress&cs=tinysrgb&w=600",
     date: "Dec 5, 2024",
     author: "Admin",
-    readTime: "3 min read",
-    category: "Events"
+    category: "Events",
   },
   {
     id: 2,
@@ -33,8 +32,7 @@ const newsItems: NewsItem[] = [
       "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=600",
     date: "Dec 1, 2024",
     author: "Admin",
-    readTime: "4 min read",
-    category: "Announcement"
+    category: "Announcement",
   },
   {
     id: 3,
@@ -45,117 +43,99 @@ const newsItems: NewsItem[] = [
       "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600",
     date: "Nov 28, 2024",
     author: "Admin",
-    readTime: "2 min read",
-    category: "Education"
+    category: "Education",
   },
 ];
 
 export default function NewsSection() {
+  const SCROLL_OFFSET = 88;
+
+  const scrollToNewsTop = () => {
+    const el = document.getElementById("news");
+    if (el)
+      window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: "smooth" });
+  };
+
   return (
     <section id="news" className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Scroll Indicator - More Subtle */}
-        <div className="flex justify-center mb-12">
-          <ChevronDown className="w-5 h-5 text-gray-300" />
-        </div>
-
-        {/* Header */}
+      <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
-          {/* <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-4">
-            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-              Latest Updates
-            </span>
-          </div> */}
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
             Community News
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Stay connected with the latest announcements and events from our community
+            Stay connected with the latest updates and announcements
           </p>
         </div>
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
           {newsItems.map((news) => (
             <div
               key={news.id}
-              className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all duration-300"
+              className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 h-[420px] flex flex-col"
             >
               {/* Image */}
-              <div className="relative h-56 overflow-hidden">
+              <div className="relative h-48 overflow-hidden">
                 <img
                   src={news.image}
                   alt={news.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
-                {/* Category Overlay */}
-                <div className="absolute top-4 left-4">
-                  <span className={`inline-block px-3 py-1 text-xs font-medium rounded ${
-                    news.category === 'Events' 
-                      ? 'bg-blue-600 text-white' 
-                      : news.category === 'Announcement'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-green-600 text-white'
-                  }`}>
-                    {news.category}
-                  </span>
-                </div>
+
+                {/* Minimal Category */}
+                <span className="absolute top-4 left-4 px-3 py-1 text-xs font-medium rounded-lg bg-white/85 text-gray-800 border">
+                  {news.category}
+                </span>
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                {/* Title */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-3 hover:text-blue-700 transition-colors line-clamp-2">
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-700">
                   {news.title}
                 </h3>
 
-                {/* Excerpt */}
-                <p className="text-gray-600 mb-5 line-clamp-3 leading-relaxed text-sm">
+                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                   {news.excerpt}
                 </p>
 
-                {/* Meta Info */}
-                <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4" />
-                      <span>{news.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
-                      <span>{news.readTime}</span>
-                    </div>
-                  </div>
+                {/* Date */}
+                <div className="flex items-center text-gray-500 text-sm border-t pt-3">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {news.date}
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between mt-4">
+                <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-gray-600" />
                     </div>
                     <span className="text-sm text-gray-700">{news.author}</span>
                   </div>
-                  
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1 group">
-                    Read
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
+
+                  {/* Pass entire news object to the details page */}
+                  <Link
+                    to={`/news/${news.id}`}
+                    state={news}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    Read <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Professional View All Button */}
+        {/* View All News button (centered) */}
         <div className="text-center">
-          <a
-            href="#news-all"
-            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300 group"
+          <button
+            onClick={scrollToNewsTop}
+            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
           >
-            <span>Browse All Community Updates</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
+            View All News
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>
