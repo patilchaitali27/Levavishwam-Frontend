@@ -61,17 +61,23 @@ function getIcon(type: string) {
 }
 
 export default function DownloadsSection() {
+  const scrollToDownloadsTop = () => {
+    const el = document.getElementById("downloads");
+    if (el) window.scrollTo({ top: el.offsetTop - 88, behavior: "smooth" });
+  };
+
   return (
-    <section className="py-12 bg-white rounded-2xl shadow-md p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">Downloads</h2>
-          <a
-            href="#downloads-all"
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold transition"
-          >
-            View All <ArrowRight className="w-5 h-5" />
-          </a>
+    <section id="downloads" className="py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Centered Header with linear underline */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            Downloads
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg mb-6">
+            Get the latest resources and files.
+          </p>
+          <div className="mx-auto w-24 h-1 rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
         </div>
 
         <div className="space-y-4">
@@ -107,6 +113,17 @@ export default function DownloadsSection() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* View All Downloads button */}
+        <div className="text-center mt-8">
+          <button
+            onClick={scrollToDownloadsTop}
+            className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+          >
+            View All Downloads
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>

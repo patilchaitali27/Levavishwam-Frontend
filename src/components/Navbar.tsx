@@ -1,10 +1,19 @@
-import { useState, useEffect } from "react";
-import { Menu, X, User, LogOut, Search, ChevronDown, Home, Calendar, Download, Mail } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, User, LogOut, Search, ChevronDown, Home, Calendar, Download, Mail, Edit } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [scrolled, setScrolled] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  // User data - you can get this from your auth context or API
+  const userData = {
+    name: "Chaitali Patil",
+    email: "chaitalipatil.tnp@gmail.com",
+    role: "Student"
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,9 +23,24 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const navItems = [
     { id: "home", label: "Home" },
     { id: "menu", label: "Menu" },
+    { id: "about", label: "About" },
     { id: "news", label: "News" },
     { id: "events", label: "Events" },
     { id: "downloads", label: "Downloads" },
@@ -24,14 +48,40 @@ export default function Navbar() {
   ];
 
   const scrollToSection = (id: string) => {
-    const section = document.getElementById(id);
-    if (section) {
-      window.scrollTo({
-        top: section.offsetTop - 80,
-        behavior: "smooth",
-      });
+    // For contact section which is in footer
+    if (id === "contact") {
+      const footerSection = document.getElementById("contact");
+      if (footerSection) {
+        window.scrollTo({
+          top: footerSection.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    } else {
+      // For other sections
+      const section = document.getElementById(id);
+      if (section) {
+        window.scrollTo({
+          top: section.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
     }
     setIsOpen(false);
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleEditProfile = () => {
+    // Add your edit profile logic here
+    console.log("Edit profile clicked");
+    setIsProfileDropdownOpen(false);
+    // You can navigate to edit profile page or open a modal
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setIsProfileDropdownOpen(false);
+    // Add your logout logic here (clear tokens, etc.)
   };
 
   return (
@@ -41,7 +91,7 @@ export default function Navbar() {
         : 'bg-white/90 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div 
@@ -84,27 +134,53 @@ export default function Navbar() {
           </nav>
 
           {/* Right Side Actions - Desktop */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3" ref={profileDropdownRef}>
             {isLoggedIn ? (
-              <div className="flex items-center gap-3">
+              <div className="relative">
                 <button
-                  onClick={() => setIsLoggedIn(false)}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium text-sm"
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex items-center gap-3 pl-3 border-l border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
                 >
-                  <LogOut className="w-4 h-4 inline mr-2" />
-                  Logout
-                </button>
-                <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
                   <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
                     <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
                       <User className="w-4 h-4 text-blue-500" />
                     </div>
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">Mernai</p>
-                    <p className="text-xs text-gray-500">Student</p>
+                    <p className="text-sm font-semibold text-gray-900">{userData.name.split(' ')[0]}</p>
+                    <p className="text-xs text-gray-500">{userData.role}</p>
                   </div>
-                </div>
+                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                    {/* User Info */}
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-900">{userData.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{userData.email}</p>
+                    </div>
+                    
+                    {/* Dropdown Items */}
+                    <div className="py-1">
+                      <button
+                        onClick={handleEditProfile}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit Profile
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <button
@@ -162,6 +238,7 @@ export default function Navbar() {
             <div className="mt-6 pt-4 border-t border-gray-200">
               {isLoggedIn ? (
                 <div className="space-y-3">
+                  {/* User Info */}
                   <div className="flex items-center gap-3 px-4 py-3 bg-blue-50 rounded-xl">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
                       <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
@@ -169,15 +246,25 @@ export default function Navbar() {
                       </div>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">Mernai</p>
-                      <p className="text-sm text-gray-500">Student Member</p>
+                      <p className="font-semibold text-gray-900">{userData.name}</p>
+                      <p className="text-sm text-gray-500">{userData.email}</p>
+                      <p className="text-xs text-gray-400">{userData.role}</p>
                     </div>
                   </div>
+                  
+                  {/* Mobile Profile Options */}
                   <button
-                    onClick={() => setIsLoggedIn(false)}
-                    className="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+                    onClick={handleEditProfile}
+                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium flex items-center gap-2"
                   >
-                    <LogOut className="w-4 h-4 inline mr-2" />
+                    <Edit className="w-4 h-4" />
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
                     Logout
                   </button>
                 </div>

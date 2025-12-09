@@ -105,11 +105,7 @@ export default function CommitteeSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center mb-10">
-          <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-4">
-            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-              Leadership Team
-            </span>
-          </div>
+          
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Committee Members
           </h2>
