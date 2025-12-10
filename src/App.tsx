@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import NewsSection from "./components/NewsSection";
-import NewsDetailsPage from "./pages/NewsDetailsPage";
+
 import ScrollToHash from "./components/ScrollToHash";
-import EventDetailsPage from "./pages/EventDetailsPage";
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-
+import NewsDetails from "./pages/NewsDetails";
 
 export default function App() {
   return (
@@ -14,9 +14,9 @@ export default function App() {
       <ScrollToHash />
       <Routes>
         <Route path="/" element={<Home />} />
-         <Route path="/news" element={<NewsSection />} />
-        <Route path="/news/:id" element={<NewsDetailsPage />} />
-        <Route path="/events/:id" element={<EventDetailsPage />} />
+        <Route path="/news" element={<NewsSection />} />
+        <Route path="/news/:id" element={<NewsDetails />} />
+        
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         

@@ -155,12 +155,10 @@
 //   );
 // }
 import { useState } from "react";
-import { Mail, User, Lock } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { User, Mail, Lock, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
-  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -198,22 +196,29 @@ export default function Signup() {
       // confirmPassword is NOT sent to backend
     };
 
-    const resp = await signup(payload);
+    // const resp = await signup(payload);
     setLoading(false);
 
-    if (resp.success) {
-      setSuccessMsg(resp.message || "Signup successful. Please login.");
-      setTimeout(() => navigate("/login"), 800);
-    } else {
-      setError(resp.message || "Signup failed");
-    }
+    // if (resp.success) {
+    //   setSuccessMsg(resp.message || "Signup successful. Please login.");
+    //   setTimeout(() => navigate("/login"), 800);
+    // } else {
+    //   setError(resp.message || "Signup failed");
+    // }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <button
+          type="button"
+          onClick={() => navigate("/", { state: { scrollToId: "home" } })}
+          className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800"
+        >
+          <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">
-          Create Your Account
+          Create an Account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">

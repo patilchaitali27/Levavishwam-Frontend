@@ -19,19 +19,20 @@ export default function Home() {
     const state: any = (location && (location as any).state) || {};
     const id = state?.scrollToId;
     if (id) {
-      // small delay so DOM mounts
       setTimeout(() => {
         const el =
           document.getElementById(id) ||
           document.querySelector(`[data-section="${id}"]`);
         if (el) {
-          const offset = 88; // same as Navbar SCROLL_OFFSET
+          const offset = 88;
           window.scrollTo({
             top: (el as HTMLElement).offsetTop - offset,
             behavior: "smooth",
           });
         } else {
-          console.warn(`Home: element with id or data-section="${id}" not found.`);
+          console.warn(
+            `Home: element with id or data-section="${id}" not found.`
+          );
         }
         try {
           window.history.replaceState({}, document.title);
@@ -40,7 +41,6 @@ export default function Home() {
     }
   }, [location]);
 
-  // Smooth scroll to News section
   const scrollToNews = () => {
     const section = document.getElementById("news");
     if (section) {
@@ -55,7 +55,7 @@ export default function Home() {
       <div className="pt-10">
         <Carousel />
 
-        {/* ↓ SIMPLE CLEAN ARROW */}
+        {/*SIMPLE CLEAN ARROW */}
         <div className="w-full flex justify-center mt-6 mb-10">
           <button
             onClick={scrollToNews}
@@ -81,18 +81,6 @@ export default function Home() {
           <div className="mt-12">
             <CommitteeSection />
           </div>
-
-          <section id="about" data-section="about" className="py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                About Levavishwam
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Short about text...
-              </p>
-              <div className="mx-auto w-24 h-1 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 mt-6" />
-            </div>
-          </section>
         </div>
 
         <div className="mt-16">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -21,8 +21,7 @@ export default function Login() {
     const resp = await login(formData.email, formData.password);
     setLoading(false);
     if (resp.success) {
-      // redirect to home or dashboard
-      navigate("/");
+      navigate("/", { state: { scrollToId: "home" } });
     } else {
       setError(resp.message || "Invalid credentials");
     }
@@ -31,7 +30,16 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">Login to Your Account</h2>
+        <button
+          type="button"
+          onClick={() => navigate("/", { state: { scrollToId: "home" } })}
+          className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800"
+        >
+          <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">
+          Login to Your Account
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
@@ -80,7 +88,10 @@ export default function Login() {
 
         <p className="text-gray-600 text-center text-sm mt-4">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-600 font-semibold hover:underline">
+          <a
+            href="/signup"
+            className="text-blue-600 font-semibold hover:underline"
+          >
             Sign Up
           </a>
         </p>

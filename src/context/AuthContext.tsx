@@ -18,7 +18,8 @@ interface IAuthContext {
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-const API_BASE = "https://localhost:7283/api/auth";
+// const API_BASE = "https://localhost:7283/api/auth";
+const API_BASE = "http://localhost:5041/api/auth";
 
 
 function decodeJwtPayload(token: string) {

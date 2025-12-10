@@ -1,4 +1,12 @@
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -13,7 +21,9 @@ export default function Footer() {
               <h3 className="text-xl font-bold text-white">Levavishwam</h3>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Building a stronger community through unity, tradition, and shared values. Dedicated to the welfare and growth of all community members.
+              Building a stronger community through unity, tradition, and shared
+              values. Dedicated to the welfare and growth of all community
+              members.
             </p>
           </div>
 
@@ -21,27 +31,42 @@ export default function Footer() {
             <h4 className="text-lg font-bold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#home"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Home
                 </a>
               </li>
               <li>
-                <a href="#news" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#news"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   News
                 </a>
               </li>
               <li>
-                <a href="#events" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#events"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Events
                 </a>
               </li>
               <li>
-                <a href="#downloads" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#downloads"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Downloads
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#contact"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Contact
                 </a>
               </li>
@@ -52,27 +77,42 @@ export default function Footer() {
             <h4 className="text-lg font-bold text-white mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Guidelines
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Membership
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 transition"
+                >
                   FAQ
                 </a>
               </li>
@@ -91,13 +131,19 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-sm hover:text-blue-400 transition">
+                <a
+                  href="tel:+919876543210"
+                  className="text-sm hover:text-blue-400 transition"
+                >
                   +91 98765 43210
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                <a href="mailto:info@levavishwam.org" className="text-sm hover:text-blue-400 transition">
+                <a
+                  href="mailto:info@levavishwam.org"
+                  className="text-sm hover:text-blue-400 transition"
+                >
                   info@levavishwam.org
                 </a>
               </div>

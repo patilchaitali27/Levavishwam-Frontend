@@ -1,59 +1,18 @@
 import { useState, useEffect } from "react";
 import { Download, FileText, File, Clock, ArrowRight } from "lucide-react";
+import { getDownloads } from "../services/homeApi";
 
-interface Document {
+interface DocumentItem {
   id: number;
   title: string;
   description: string;
-  fileType: "pdf" | "doc" | "xls";
+  fileType: string;
   size: string;
   uploadDate: string;
-  downloads: number;
+  downloadsCount: number;
   category: string;
+  fileUrl: string; // ✅ Added
 }
-
-const documents: Document[] = [
-  {
-    id: 1,
-    title: "Community Guidelines & Code of Conduct",
-    description: "Important guidelines for all community members.",
-    fileType: "pdf",
-    size: "2.4 MB",
-    uploadDate: "Dec 1, 2024",
-    downloads: 234,
-    category: "Guidelines",
-  },
-  {
-    id: 2,
-    title: "2024 Annual Report",
-    description: "Comprehensive report of community activities and plans.",
-    fileType: "pdf",
-    size: "5.8 MB",
-    uploadDate: "Nov 28, 2024",
-    downloads: 567,
-    category: "Reports",
-  },
-  {
-    id: 3,
-    title: "Event Registration Form",
-    description: "Template for event registration.",
-    fileType: "doc",
-    size: "1.2 MB",
-    uploadDate: "Nov 25, 2024",
-    downloads: 145,
-    category: "Forms",
-  },
-  {
-    id: 4,
-    title: "Budget Allocation 2024-2025",
-    description: "Detailed breakdown of yearly expenses.",
-    fileType: "xls",
-    size: "0.8 MB",
-    uploadDate: "Nov 20, 2024",
-    downloads: 98,
-    category: "Finance",
-  },
-];
 
 function getIcon(type: string) {
   if (type === "pdf") return <File className="w-7 h-7 text-red-500" />;
@@ -62,9 +21,19 @@ function getIcon(type: string) {
 }
 
 export default function DownloadsSection() {
+  const [docs, setDocs] = useState<DocumentItem[]>([]);
   const [showAll, setShowAll] = useState(false);
 
-  // AUTO SCROLL TO TOP AFTER VIEW LESS
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await getDownloads();
+        setDocs(res);
+      } catch {}
+    };
+    load();
+  }, []);
+
   useEffect(() => {
     if (!showAll) {
       const el = document.getElementById("downloads");
@@ -77,14 +46,17 @@ export default function DownloadsSection() {
     }
   }, [showAll]);
 
-  // SHOW ONLY 3 OR ALL DOCUMENTS
-  const visibleDocs = showAll ? documents : documents.slice(0, 3);
+  const visibleDocs = showAll ? docs : docs.slice(0, 3);
+
+  const handleDownload = (url: string) => {
+    if (!url) return;
+    window.open(url, "_blank");
+  };
 
   return (
     <section id="downloads" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* HEADER */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Downloads
@@ -95,7 +67,6 @@ export default function DownloadsSection() {
           <div className="mx-auto w-24 h-1 rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
         </div>
 
-        {/* DOCUMENT LIST */}
         <div className="space-y-4">
           {visibleDocs.map((doc) => (
             <div
@@ -121,11 +92,14 @@ export default function DownloadsSection() {
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" /> {doc.uploadDate}
                     </span>
-                    <span>{doc.downloads} downloads</span>
+                    <span>{doc.downloadsCount} downloads</span>
                   </div>
                 </div>
 
-                <button className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow">
+                <button
+                  onClick={() => handleDownload(doc.fileUrl)}
+                  className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow"
+                >
                   <Download className="w-5 h-5" />
                 </button>
               </div>
@@ -133,15 +107,14 @@ export default function DownloadsSection() {
           ))}
         </div>
 
-        {/* VIEW MORE / VIEW LESS BUTTON */}
-        {documents.length > 3 && (
+        {docs.length > 3 && (
           <div className="text-center mt-8">
             <button
               onClick={() => setShowAll(!showAll)}
               className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                          font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
             >
-              {showAll ? "View Less" : "View All Downloads"}  
+              {showAll ? "View Less" : "View All Downloads"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

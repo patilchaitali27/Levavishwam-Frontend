@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, User, LogOut, Search, ChevronDown, Edit } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -14,16 +13,17 @@ export default function Navbar() {
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsProfileDropdownOpen(false);
       }
     };
@@ -44,54 +44,37 @@ export default function Navbar() {
   const SCROLL_OFFSET = 88;
 
   const attemptScroll = (targetId: string) => {
-    // try exact id
     let el = document.getElementById(targetId);
-    // try loose match (id contains)
-    if (!el) el = document.querySelector(`[id*="${targetId}"]`) as HTMLElement | null;
-    // try data-section attribute
-    if (!el) el = document.querySelector(`[data-section="${targetId}"]`) as HTMLElement | null;
+    if (!el)
+      el = document.querySelector(`[id*="${targetId}"]`) as HTMLElement | null;
+    if (!el)
+      el = document.querySelector(
+        `[data-section="${targetId}"]`
+      ) as HTMLElement | null;
 
     if (el) {
-      window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: "smooth" });
+      window.scrollTo({
+        top: el.offsetTop - SCROLL_OFFSET,
+        behavior: "smooth",
+      });
       return true;
     }
     return false;
   };
 
   const scrollToSection = (id: string) => {
-    if (id === "contact") {
-      const footerSection = document.getElementById("contact");
-      if (footerSection) {
-        window.scrollTo({
-          top: footerSection.offsetTop - 80,
-          behavior: "smooth",
-        });
-      }
-    } else {
-      const section = document.getElementById(id);
-      if (section) {
-        window.scrollTo({
-          top: section.offsetTop - 80,
-          behavior: "smooth",
-        });
-      }
-    }
     setIsOpen(false);
     setIsProfileDropdownOpen(false);
 
-    // map logical nav ids to actual section ids
     const mapping: Record<string, string> = {
-      about: "information", // "About" nav should scroll to id="information"
-      contact: "contact",   // contact -> footer/contact (keep as-is)
+      about: "information",
+      contact: "contact",
     };
 
     const targetId = mapping[id] ?? id;
 
     if (location.pathname === "/") {
-      const success = attemptScroll(targetId);
-      if (!success) {
-        console.warn(`Could not find section '${targetId}'. Ensure an element with id="${targetId}" or data-section exists in Home.`);
-      }
+      attemptScroll(targetId);
       return;
     }
 
@@ -111,12 +94,17 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${ scrolled ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100' : 'bg-white/90 backdrop-blur-sm' }`}>
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100"
+          : "bg-white/90 backdrop-blur-sm"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div 
+            <div
               className="flex items-center gap-3 cursor-pointer"
               onClick={() => scrollToSection("home")}
             >
@@ -124,13 +112,14 @@ export default function Navbar() {
                 <span className="text-white font-bold text-lg">L</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Levavishwam</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Levavishwam
+                </h1>
                 <p className="text-xs text-gray-500">Community Portal</p>
               </div>
             </div>
           </div>
 
-          {/* Search Bar - Desktop */}
           <div className="hidden lg:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -142,7 +131,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Navigation - Desktop */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <button
@@ -155,12 +143,16 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Right Side Actions - Desktop */}
-          <div className="hidden lg:flex items-center gap-3" ref={profileDropdownRef}>
+          <div
+            className="hidden lg:flex items-center gap-3"
+            ref={profileDropdownRef}
+          >
             {isAuthenticated && user ? (
               <div className="relative">
                 <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  onClick={() =>
+                    setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                  }
                   className="flex items-center gap-3 pl-3 border-l border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
                 >
                   <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
@@ -169,22 +161,29 @@ export default function Navbar() {
                     </div>
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">{user.name.split(' ')[0]}</p>
-                    <p className="text-xs text-gray-500">{/* role if available */}</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {user.name.split(" ")[0]}
+                    </p>
+                    <p className="text-xs text-gray-500" />
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      isProfileDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
-                {/* Profile Dropdown */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                    {/* User Info */}
                     <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email || ""}</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {user.name}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {user.email || ""}
+                      </p>
                     </div>
-                    
-                    {/* Dropdown Items */}
+
                     <div className="py-1">
                       <button
                         onClick={handleEditProfile}
@@ -206,7 +205,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={() => window.location.href = "/login"}
+                onClick={() => (window.location.href = "/login")}
                 className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
               >
                 <User className="w-4 h-4" />
@@ -215,7 +214,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -228,10 +226,8 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isOpen && (
           <div className="lg:hidden pb-4 border-t border-gray-200 mt-2 pt-4">
-            {/* Search Bar - Mobile */}
             <div className="mb-4">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -243,7 +239,6 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile Navigation */}
             <nav className="space-y-1">
               {navItems.map((item) => (
                 <button
@@ -256,11 +251,9 @@ export default function Navbar() {
               ))}
             </nav>
 
-            {/* Mobile User Actions */}
             <div className="mt-6 pt-4 border-t border-gray-200">
               {isAuthenticated && user ? (
                 <div className="space-y-3">
-                  {/* User Info */}
                   <div className="flex items-center gap-3 px-4 py-3 bg-blue-50 rounded-xl">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
                       <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
@@ -269,12 +262,13 @@ export default function Navbar() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">{user.name}</p>
-                      <p className="text-sm text-gray-500">{user.email || ""}</p>
-                      <p className="text-xs text-gray-400">{/* role if available */}</p>
+                      <p className="text-sm text-gray-500">
+                        {user.email || ""}
+                      </p>
+                      <p className="text-xs text-gray-400" />
                     </div>
                   </div>
-                  
-                  {/* Mobile Profile Options */}
+
                   <button
                     onClick={handleEditProfile}
                     className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium flex items-center gap-2"
@@ -292,7 +286,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <button
-                  onClick={() => window.location.href = "/login"}
+                  onClick={() => (window.location.href = "/login")}
                   className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-md transition-all font-medium flex items-center justify-center gap-2"
                 >
                   <User className="w-5 h-5" />
