@@ -20,6 +20,7 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 const API_BASE = "https://localhost:7283/api/auth";
 
+
 function decodeJwtPayload(token: string) {
   try {
     const payload = token.split(".")[1];
