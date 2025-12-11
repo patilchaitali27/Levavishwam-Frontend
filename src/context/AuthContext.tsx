@@ -5,6 +5,7 @@ export interface IUser {
   userId: number;
   name: string;
   email?: string;
+  role?: string;
 }
 
 interface IAuthContext {
@@ -68,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userObj: IUser = {
           userId: data.userId,
           name: data.name,
+          role: data.role
         };
 
         // try to decode email from token if present

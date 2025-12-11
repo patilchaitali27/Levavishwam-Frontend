@@ -1,6 +1,16 @@
 import React from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminNavbar: React.FC = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <header className="w-full bg-white shadow-sm px-6 py-4 flex justify-between items-center border-b border-slate-200">
       <div>
@@ -13,7 +23,7 @@ const AdminNavbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="text-sm px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+        <button onClick={handleLogout} className="text-sm px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
           Logout
         </button>
         <div className="flex items-center gap-2">

@@ -8,10 +8,12 @@ import Signup from "./pages/Signup";
 import NewsDetails from "./pages/NewsDetails";
 import EventDetails from "./pages/EventDetails";
 
-// 🔥 IMPORT ADMIN PAGES
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import MenuManagement from "./pages/MenuManagement";
+
+import AdminRoute from "./routes/AdminRoute";
+import UserRoute from "./routes/UserRoute";
 
 export default function App() {
   return (
@@ -19,27 +21,25 @@ export default function App() {
       <ScrollToHash />
 
       <Routes>
-        {/* USER ROUTES */}
-        <Route path="/" element={<Home />} />
-        <Route path="/news" element={<NewsSection />} />
-        <Route path="/news/:id" element={<NewsDetails />} />
-<<<<<<< Updated upstream
+        {/* USER-ONLY ROUTES */}
+        <Route element={<UserRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/news" element={<NewsSection />} />
+          <Route path="/news/:id" element={<NewsDetails />} />
+          <Route path="/events/:id" element={<EventDetails />} />
+        </Route>
 
-        <Route path="/events/:id" element={<EventDetails />} />
-
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
-=======
+        {/* AUTH ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* ADMIN ROUTES */}
-      <Route path="/admin" element={<AdminLayout />}>
-  <Route path="dashboard" element={<AdminDashboard />} />
-  <Route path="menu" element={<MenuManagement />} />  {/* KEY CHANGE */}
-</Route>
-
->>>>>>> Stashed changes
+        {/* ADMIN-ONLY ROUTES */}
+        <Route path="/admin" element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="menu" element={<MenuManagement />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

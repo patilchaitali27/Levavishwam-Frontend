@@ -22,10 +22,15 @@ export default function Login() {
     setLoading(false);
 
     if (resp.success) {
-      navigate("/", { state: { scrollToId: "home" } });
-    } else {
-      setError(resp.message || "Invalid credentials");
-    }
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  if (user.role?.toLowerCase() === "admin") {
+    navigate("/admin/dashboard");
+  } else {
+    navigate("/", { state: { scrollToId: "home" } });
+  }
+
+}
   };
 
   return (
