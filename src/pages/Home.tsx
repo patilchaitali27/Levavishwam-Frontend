@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -14,39 +14,63 @@ import { ChevronDown } from "lucide-react";
 
 export default function Home() {
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
+  // ⛔ Stop browser from restoring scroll after refresh
   useEffect(() => {
-    const state: any = (location && (location as any).state) || {};
-    const id = state?.scrollToId;
-    if (id) {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  // Page loader ⏳
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll to specific section when coming from another page
+  useEffect(() => {
+    const state: any = location?.state || {};
+    const scrollId = state?.scrollToId;
+
+    if (scrollId) {
       setTimeout(() => {
-        const el =
-          document.getElementById(id) ||
-          document.querySelector(`[data-section="${id}"]`);
-        if (el) {
-          const offset = 88;
+        const element =
+          document.getElementById(scrollId) ||
+          document.querySelector(`[data-section="${scrollId}"]`);
+
+        if (element) {
           window.scrollTo({
-            top: (el as HTMLElement).offsetTop - offset,
+            top: (element as HTMLElement).offsetTop - 88,
             behavior: "smooth",
           });
-        } else {
-          console.warn(
-            `Home: element with id or data-section="${id}" not found.`
-          );
         }
+
         try {
           window.history.replaceState({}, document.title);
         } catch {}
-      }, 120);
+      }, 200);
     }
   }, [location]);
 
+  // Scroll to News on arrow click
   const scrollToNews = () => {
     const section = document.getElementById("news");
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  // LOADER UI
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-14 w-14 border-4 border-blue-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div id="home">
@@ -55,7 +79,7 @@ export default function Home() {
       <div className="pt-10">
         <Carousel />
 
-        {/*SIMPLE CLEAN ARROW */}
+        {/* Scroll-down Arrow */}
         <div className="w-full flex justify-center mt-6 mb-10">
           <button
             onClick={scrollToNews}

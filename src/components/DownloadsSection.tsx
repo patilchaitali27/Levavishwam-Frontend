@@ -11,7 +11,7 @@ interface DocumentItem {
   uploadDate: string;
   downloadsCount: number;
   category: string;
-  fileUrl: string; // ✅ Added
+  fileUrl: string;
 }
 
 function getIcon(type: string) {
@@ -34,18 +34,6 @@ export default function DownloadsSection() {
     load();
   }, []);
 
-  useEffect(() => {
-    if (!showAll) {
-      const el = document.getElementById("downloads");
-      if (el) {
-        window.scrollTo({
-          top: el.offsetTop - 80,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [showAll]);
-
   const visibleDocs = showAll ? docs : docs.slice(0, 3);
 
   const handleDownload = (url: string) => {
@@ -56,7 +44,7 @@ export default function DownloadsSection() {
   return (
     <section id="downloads" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
+        
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Downloads
@@ -75,7 +63,7 @@ export default function DownloadsSection() {
                          hover:shadow-lg hover:border-blue-300 transition cursor-pointer"
             >
               <div className="flex items-center gap-5">
-
+                
                 <div className="p-4 bg-white rounded-lg border border-gray-200">
                   {getIcon(doc.fileType)}
                 </div>

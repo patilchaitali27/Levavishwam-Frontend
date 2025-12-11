@@ -1,9 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import NewsSection from "./components/NewsSection";
-
 import ScrollToHash from "./components/ScrollToHash";
-
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NewsDetails from "./pages/NewsDetails";

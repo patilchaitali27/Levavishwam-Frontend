@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { getCarousel } from "../services/homeApi";
 
 interface CarouselImage {
@@ -18,34 +17,32 @@ export default function Carousel() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [autoPlay, setAutoPlayState] = useState(true);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
   useEffect(() => {
     const load = async () => {
-      try {
-        const res = await getCarousel();
-        setCarouselImages(res);
-      } catch {}
+      const res = await getCarousel();
+      setCarouselImages(res);
     };
     load();
   }, []);
 
   useEffect(() => {
     if (carouselImages.length === 0 || !autoPlay) return;
+
     const interval = setInterval(() => handleNext(), 5000);
     return () => clearInterval(interval);
   }, [autoPlay, carouselImages]);
 
   const handlePrevious = () => {
-    if (isTransitioning || carouselImages.length === 0) return;
+    if (isTransitioning) return;
+
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
     setTimeout(() => setIsTransitioning(false), 700);
   };
 
   const handleNext = () => {
-    if (isTransitioning || carouselImages.length === 0) return;
+    if (isTransitioning) return;
+
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
     setTimeout(() => setIsTransitioning(false), 700);
@@ -53,47 +50,20 @@ export default function Carousel() {
 
   const goToSlide = (index: number) => {
     if (isTransitioning || index === currentIndex) return;
+
     setIsTransitioning(true);
     setCurrentIndex(index);
     setTimeout(() => setIsTransitioning(false), 700);
   };
 
-  const SCROLL_OFFSET = 88;
-
-  const attemptScroll = (id: string) => {
-    let el =
-      document.getElementById(id) ||
-      document.querySelector(`[id*="${id}"]`) ||
-      document.querySelector(`[data-section="${id}"]`);
-
-    if (el) {
-      window.scrollTo({
-        top: (el as HTMLElement).offsetTop - SCROLL_OFFSET,
-        behavior: "smooth",
-      });
-      return true;
-    }
-    return false;
-  };
-
   const scrollToEvents = () => {
-    if (location.pathname === "/") {
-      if (attemptScroll("events")) return;
-      let tries = 0;
-      const interval = setInterval(() => {
-        tries++;
-        if (attemptScroll("events") || tries > 15) clearInterval(interval);
-      }, 120);
-      return;
-    }
+    const section = document.getElementById("events");
+    if (!section) return;
 
-    navigate("/", { state: { scrollToId: "events" } });
-
-    let tries = 0;
-    const interval = setInterval(() => {
-      tries++;
-      if (attemptScroll("events") || tries > 20) clearInterval(interval);
-    }, 150);
+    window.scrollTo({
+      top: section.offsetTop - 88,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -120,13 +90,14 @@ export default function Carousel() {
                   Levavishwam Community
                 </span>
 
-                <h3 className="text-5xl font-bold mb-4 leading-tight">{image.title}</h3>
+                <h3 className="text-5xl font-bold mb-4 leading-tight">
+                  {image.title}
+                </h3>
 
                 <p className="text-xl text-gray-200 mb-8">{image.description}</p>
 
                 {image.ctaText && (
                   <button
-                    type="button"
                     onClick={scrollToEvents}
                     className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-xl"
                   >

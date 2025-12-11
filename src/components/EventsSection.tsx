@@ -49,18 +49,6 @@ export default function EventsSection() {
     load();
   }, []);
 
-  useEffect(() => {
-    if (!showAll) {
-      const el = document.getElementById("events");
-      if (el) {
-        window.scrollTo({
-          top: el.offsetTop - 80,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [showAll]);
-
   const visibleEvents = showAll ? events : events.slice(0, 2);
 
   return (
