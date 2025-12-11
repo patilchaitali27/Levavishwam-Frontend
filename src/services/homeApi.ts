@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7283/api/Home";
+const API_URL = "https://localhost:44315/api/Home";
 
 export const getCarousel = async () => {
   const res = await axios.get(`${API_URL}/carousel`);

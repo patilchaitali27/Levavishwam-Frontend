@@ -157,9 +157,12 @@
 import { useState } from "react";
 import { User, Mail, Lock, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -177,34 +180,34 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setError(null);
-    setSuccessMsg(null);
+  e.preventDefault();
+  setError(null);
+  setSuccessMsg(null);
 
-    // confirm password check
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords do not match");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const payload = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password
-      // confirmPassword is NOT sent to backend
-    };
+  const payload = {
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+    confirmPassword: formData.confirmPassword
+  };
 
-    // const resp = await signup(payload);
-    setLoading(false);
+  const resp = await signup(payload);
+  setLoading(false);
 
-    // if (resp.success) {
-    //   setSuccessMsg(resp.message || "Signup successful. Please login.");
-    //   setTimeout(() => navigate("/login"), 800);
-    // } else {
-    //   setError(resp.message || "Signup failed");
-    // }
+  if (resp.success) {
+    setSuccessMsg(resp.message || "Signup successful. Please login.");
+    setTimeout(() => navigate("/login"), 800);
+  } else {
+    setError(resp.message || "Signup failed");
+  }
+
   };
 
   return (
