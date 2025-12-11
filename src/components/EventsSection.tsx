@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getEvents } from "../services/homeApi";
-import { useAuth } from "../context/AuthContext";
 
 interface EventItem {
   id: number;
@@ -42,9 +41,6 @@ export default function EventsSection() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [showAll, setShowAll] = useState(false);
 
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
   useEffect(() => {
     const load = async () => {
       const res = await getEvents();
@@ -54,24 +50,6 @@ export default function EventsSection() {
   }, []);
 
   const visibleEvents = showAll ? events : events.slice(0, 2);
-
-  // 🔹 PROTECTED: View Details
-  const handleViewDetails = (event: EventItem) => {
-    if (isAuthenticated) {
-      navigate(`/events/${event.id}`, { state: event });
-    } else {
-      navigate("/login");
-    }
-  };
-
-  // 🔹 PROTECTED: View All Events
-  const handleViewAllEvents = () => {
-    if (isAuthenticated) {
-      navigate("/events");
-    } else {
-      navigate("/login");
-    }
-  };
 
   return (
     <section id="events" className="py-15 bg-white">
@@ -124,15 +102,15 @@ export default function EventsSection() {
                   {event.description}
                 </p>
 
-                {/* 🔹 PROTECTED VIEW DETAILS */}
-                <button
-                  onClick={() => handleViewDetails(event)}
+                <Link
+                  to={`/events/${event.id}`}
+                  state={event}
                   className="mt-4 w-full px-4 py-2.5 border border-blue-600 text-blue-600 hover:bg-blue-50 
                              font-medium rounded-lg transition flex items-center justify-center gap-2"
                 >
                   View Details
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -140,19 +118,18 @@ export default function EventsSection() {
 
         {events.length > 2 && (
           <div className="text-center mt-10">
-            {/* 🔹 PROTECTED VIEW ALL EVENTS */}
             <button
-              onClick={handleViewAllEvents}
+              onClick={() => setShowAll(!showAll)}
               className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                        font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
             >
-              View All Community Events
+              {showAll ? "View Less" : "View All Community Events"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
-
       </div>
     </section>
   );
+
 }

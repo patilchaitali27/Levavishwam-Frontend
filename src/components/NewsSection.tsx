@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, User, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getNews } from "../services/homeApi";
-import { useAuth } from "../context/AuthContext";
 
 interface NewsItem {
   id: number;
@@ -18,9 +17,6 @@ export default function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [showAll, setShowAll] = useState(false);
 
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
   useEffect(() => {
     const load = async () => {
       try {
@@ -32,22 +28,6 @@ export default function NewsSection() {
     };
     load();
   }, []);
-
-  const handleReadMore = (item: NewsItem) => {
-    if (isAuthenticated) {
-      navigate(`/news/${item.id}`, { state: item });
-    } else {
-      navigate("/login");
-    }
-  };
-  const handleViewAll = () => {
-  if (isAuthenticated) {
-    navigate("/news");   // your page where all news are shown
-  } else {
-    navigate("/login");
-  }
-};
-
 
   const visibleNews = showAll ? news : news.slice(0, 3);
 
@@ -101,15 +81,16 @@ export default function NewsSection() {
                   {item.category}
                 </div>
 
-                {/* PROTECTED READ MORE BUTTON */}
-                <button
-                  onClick={() => handleReadMore(item)}
+                {/* FIXED READ MORE BUTTON WITH LINK */}
+                <Link
+                  to={`/news/${item.id}`}
+                  state={item}
                   className="w-full px-4 py-2.5 border border-blue-600 text-blue-600 rounded-lg 
                              hover:bg-blue-50 transition flex items-center justify-center gap-2 font-medium"
                 >
                   Read More
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -118,7 +99,7 @@ export default function NewsSection() {
         {news.length > 3 && (
           <div className="text-center mt-10">
             <button
-              onClick={handleViewAll}
+              onClick={() => setShowAll(!showAll)}
               className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
             >
