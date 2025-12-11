@@ -15,7 +15,10 @@ import MenuManagement from "./pages/MenuManagement";
 
 import AdminRoute from "./routes/AdminRoute";
 import UserRoute from "./routes/UserRoute";
-
+import NewsManagement from "./pages/Admin/NewsManagement";
+import EventManagement from "./pages/Admin/EventManagement";
+import CommitteeManagement from "./pages/Admin/CommitteeManagement";
+import DownloadsManagement from "./pages/Admin/DownloadsManagement";
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,6 +44,11 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="menu" element={<MenuManagement />} />
+            <Route path="news" element={<NewsManagement />} />
+            <Route path="events" element={<EventManagement />} />
+            <Route path="committee" element={<CommitteeManagement />} />
+            <Route path="downloads" element={<DownloadsManagement />} />
+
           </Route>
         </Route>
       </Routes>
