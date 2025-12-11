@@ -12,6 +12,11 @@ export const getEvents = async () => {
   return res.data;
 };
 
+export const getEventById = async (id: number) => {
+  const res = await axios.get(`${API_URL}/events/${id}`);
+  return res.data;
+};
+
 export const getNews = async () => {
   const res = await axios.get(`${API_URL}/news`);
   return res.data;

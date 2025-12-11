@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Lock, ChevronLeft } from "lucide-react";
+import { Mail, Lock, ChevronLeft, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -20,6 +20,7 @@ export default function Login() {
     setLoading(true);
     const resp = await login(formData.email, formData.password);
     setLoading(false);
+
     if (resp.success) {
       navigate("/", { state: { scrollToId: "home" } });
     } else {
@@ -28,65 +29,81 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <button
-          type="button"
-          onClick={() => navigate("/", { state: { scrollToId: "home" } })}
-          className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800"
-        >
-          <ChevronLeft className="w-4 h-4" /> Back to Dashboard
-        </button>
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">
-          Login to Your Account
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 px-6">
+      
+      <div className="relative bg-white/70 backdrop-blur-xl p-10 rounded-2xl shadow-xl w-full max-w-md border border-white/40">
 
+        {/* Back button */}
+        <button
+          onClick={() => navigate("/", { state: { scrollToId: "home" } })}
+          className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition"
+        >
+          <ChevronLeft className="w-4 h-4" /> Back to Home
+        </button>
+
+        {/* Logo + Title */}
+        <div className="text-center mb-6">
+          <div className="mx-auto w-14 h-14 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <User className="w-7 h-7 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mt-4">Welcome Back</h2>
+          <p className="text-gray-600 text-sm mt-1">
+            Login to continue to Levavishwam Portal
+          </p>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email */}
+
           <div>
-            <label className="text-sm font-semibold text-gray-600">Email</label>
-            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 mt-1">
-              <Mail className="w-5 h-5 text-blue-500" />
+            <label className="text-sm font-semibold text-gray-700">Email</label>
+            <div className="flex items-center gap-3 border rounded-xl px-4 py-3 mt-1 bg-white shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+              <Mail className="w-5 h-5 text-blue-600" />
               <input
                 type="email"
                 name="email"
                 required
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full outline-none"
+                className="w-full bg-transparent outline-none text-gray-800"
               />
             </div>
           </div>
 
-          {/* Password */}
           <div>
-            <label className="text-sm font-semibold text-gray-600">Password</label>
-            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 mt-1">
-              <Lock className="w-5 h-5 text-blue-500" />
+            <label className="text-sm font-semibold text-gray-700">Password</label>
+            <div className="flex items-center gap-3 border rounded-xl px-4 py-3 mt-1 bg-white shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+              <Lock className="w-5 h-5 text-blue-600" />
               <input
                 type="password"
                 name="password"
                 required
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className="w-full outline-none"
+                className="w-full bg-transparent outline-none text-gray-800"
               />
             </div>
           </div>
 
-          {error && <div className="text-red-600 text-sm">{error}</div>}
+          {/* Error */}
+          {error && (
+            <div className="text-red-600 text-sm text-center mt-1 font-medium">
+              {error}
+            </div>
+          )}
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-60"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold shadow-md hover:shadow-lg transition active:scale-95 disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-gray-600 text-center text-sm mt-4">
+        {/* Signup Link */}
+        <p className="text-gray-700 text-center text-sm mt-6">
           Don’t have an account?{" "}
           <a
             href="/signup"
