@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NewsDetails from "./pages/NewsDetails";
 import EventDetails from "./pages/EventDetails";
+import ProfileEdit from "./pages/ProfileEdit";
 
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -32,6 +33,8 @@ export default function App() {
         {/* AUTH ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/edit-profile" element={<ProfileEdit/>} />
+
 
         {/* ADMIN-ONLY ROUTES */}
         <Route path="/admin" element={<AdminRoute />}>
