@@ -7,16 +7,20 @@ import NewsSection from "../components/NewsSection";
 import EventsSection from "../components/EventsSection";
 import DownloadsSection from "../components/DownloadsSection";
 import CommitteeSection from "../components/CommitteeSection";
-import Footer from "../components/Footer";
 import InformationSection from "../components/InformationSection";
+import Footer from "../components/Footer";
 
 import { ChevronDown } from "lucide-react";
+import { useMenuContext } from "../context/MenuContext";
 
 export default function Home() {
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
+  const { menus, loading: menuLoading } = useMenuContext();
+  const [pageLoading, setPageLoading] = useState(true);
 
-  // ⛔ Stop browser from restoring scroll after refresh
+  // LOG — Does API return menus?
+  console.log("🔥 FRONTEND MENUS:", menus);
+
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
@@ -24,26 +28,24 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
-  // Page loader ⏳
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setPageLoading(false), 600);
+    return () => clearTimeout(t);
   }, []);
 
-  // Scroll to specific section when coming from another page
   useEffect(() => {
     const state: any = location?.state || {};
-    const scrollId = state?.scrollToId;
+    const id = state?.scrollToId;
 
-    if (scrollId) {
+    if (id) {
       setTimeout(() => {
-        const element =
-          document.getElementById(scrollId) ||
-          document.querySelector(`[data-section="${scrollId}"]`);
+        const el =
+          document.getElementById(id) ||
+          document.querySelector(`[data-section="${id}"]`);
 
-        if (element) {
+        if (el) {
           window.scrollTo({
-            top: (element as HTMLElement).offsetTop - 88,
+            top: (el as HTMLElement).offsetTop - 88,
             behavior: "smooth",
           });
         }
@@ -55,19 +57,37 @@ export default function Home() {
     }
   }, [location]);
 
-  // Scroll to News on arrow click
   const scrollToNews = () => {
-    const section = document.getElementById("news");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
+    const sec = document.getElementById("news");
+    if (sec) sec.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const normalize = (p: string) => p.trim().toLowerCase();
+
+  const renderSection = (path: string) => {
+    switch (normalize(path)) {
+      case "/carousel":
+        return <section id="carousel"><Carousel /></section>;
+      case "/news":
+        return <section id="news"><NewsSection /></section>;
+      case "/information":
+        return <section id="information"><InformationSection /></section>;
+      case "/events":
+        return <section id="events"><EventsSection /></section>;
+      case "/downloads":
+        return <section id="downloads"><DownloadsSection /></section>;
+      case "/committee":
+        return <section id="committee"><CommitteeSection /></section>;
+      default:
+        return null;
     }
   };
 
-  // LOADER UI
-  if (loading) {
+  // FIXED LOADER (menus can be empty)
+  if (pageLoading || menuLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-14 w-14 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin h-14 w-14 border-4 border-blue-600 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -76,41 +96,24 @@ export default function Home() {
     <div id="home">
       <Navbar />
 
-      <div className="pt-10">
-        <Carousel />
+      <main className="pt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        {menus.map((menu) => (
+          <div key={menu.id}>{renderSection(menu.path)}</div>
+        ))}
+      </main>
 
-        {/* Scroll-down Arrow */}
-        <div className="w-full flex justify-center mt-6 mb-10">
+      {menus.some((m) => normalize(m.path) === "/news") && (
+        <div className="flex justify-center -mt-10 mb-10">
           <button
             onClick={scrollToNews}
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition shadow-sm"
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-sm"
           >
             <ChevronDown className="w-6 h-6 text-gray-700" />
           </button>
         </div>
+      )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <NewsSection />
-
-          <InformationSection />
-
-          <div className="mt-12">
-            <EventsSection />
-          </div>
-
-          <div className="mt-12">
-            <DownloadsSection />
-          </div>
-
-          <div className="mt-12">
-            <CommitteeSection />
-          </div>
-        </div>
-
-        <div className="mt-16">
-          <Footer />
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

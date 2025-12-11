@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X, User, LogOut, Search, ChevronDown, Edit } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useMenuContext } from "../context/MenuContext"; // ⬅ Added
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
+  const { menus } = useMenuContext(); // ⬅ Dynamic menus from DB
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -31,22 +33,24 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navItems = [
-    { id: "home", label: "Home" },
-    { id: "menu", label: "Menu" },
-    { id: "about", label: "About" },
-    { id: "news", label: "News" },
-    { id: "events", label: "Events" },
-    { id: "downloads", label: "Downloads" },
-    { id: "contact", label: "Contact" },
-  ];
+  // Convert DB path "/news" → "news"
+  const convertPathToId = (path: string) =>
+    path.replace("/", "").trim().toLowerCase();
+
+  // Final dynamic nav items (only active + public)
+  const dynamicNavItems = menus.map((m) => ({
+    id: convertPathToId(m.path),
+    label: m.title,
+  }));
 
   const SCROLL_OFFSET = 88;
 
   const attemptScroll = (targetId: string) => {
     let el = document.getElementById(targetId);
+
     if (!el)
       el = document.querySelector(`[id*="${targetId}"]`) as HTMLElement | null;
+
     if (!el)
       el = document.querySelector(
         `[data-section="${targetId}"]`
@@ -103,6 +107,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
+          
+          {/* LEFT - LOGO */}
           <div className="flex items-center space-x-3">
             <div
               className="flex items-center gap-3 cursor-pointer"
@@ -120,29 +126,32 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* SEARCH */}
           <div className="hidden lg:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search community..."
-                className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none text-sm transition-all"
+                className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
             </div>
           </div>
 
+          {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
+            {dynamicNavItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition"
               >
                 {item.label}
               </button>
             ))}
           </nav>
 
+          {/* PROFILE + LOGIN BUTTON */}
           <div
             className="hidden lg:flex items-center gap-3"
             ref={profileDropdownRef}
@@ -153,7 +162,7 @@ export default function Navbar() {
                   onClick={() =>
                     setIsProfileDropdownOpen(!isProfileDropdownOpen)
                   }
-                  className="flex items-center gap-3 pl-3 border-l border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
+                  className="flex items-center gap-3 pl-3 border-l border-gray-200 hover:bg-gray-50 rounded-lg p-2 transition"
                 >
                   <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
                     <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
@@ -164,136 +173,70 @@ export default function Navbar() {
                     <p className="text-sm font-semibold text-gray-900">
                       {user.name.split(" ")[0]}
                     </p>
-                    <p className="text-xs text-gray-500" />
                   </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                    className={`w-4 h-4 text-gray-500 transition ${
                       isProfileDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {user.name}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {user.email || ""}
-                      </p>
+                  <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg border rounded-xl py-2 z-50">
+                    <div className="px-4 py-3 border-b">
+                      <p className="text-sm font-semibold">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
                     </div>
 
-                    <div className="py-1">
-                      <button
-                        onClick={handleEditProfile}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                      >
-                        <Edit className="w-4 h-4" />
-                        Edit Profile
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                      </button>
-                    </div>
+                    <button
+                      onClick={handleEditProfile}
+                      className="w-full flex gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      <Edit className="w-4 h-4" /> Edit Profile
+                    </button>
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      <LogOut className="w-4 h-4" /> Logout
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
               <button
                 onClick={() => (window.location.href = "/login")}
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg flex items-center gap-2"
               >
-                <User className="w-4 h-4" />
-                Login
+                <User className="w-4 h-4" /> Login
               </button>
             )}
           </div>
 
+          {/* MOBILE MENU TOGGLE */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition"
           >
-            {isOpen ? (
-              <X className="w-6 h-6 text-gray-700" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-700" />
-            )}
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
+        {/* MOBILE MENU */}
         {isOpen && (
-          <div className="lg:hidden pb-4 border-t border-gray-200 mt-2 pt-4">
-            <div className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-                />
-              </div>
-            </div>
-
+          <div className="lg:hidden pb-4 border-t mt-2 pt-4">
             <nav className="space-y-1">
-              {navItems.map((item) => (
+              {dynamicNavItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="w-full text-left px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors font-medium"
+                  className="w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl"
                 >
                   {item.label}
                 </button>
               ))}
             </nav>
-
-            <div className="mt-6 pt-4 border-t border-gray-200">
-              {isAuthenticated && user ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 px-4 py-3 bg-blue-50 rounded-xl">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
-                      <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                        <User className="w-4 h-4 text-blue-500" />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{user.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {user.email || ""}
-                      </p>
-                      <p className="text-xs text-gray-400" />
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleEditProfile}
-                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium flex items-center gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    Edit Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium flex items-center gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => (window.location.href = "/login")}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-md transition-all font-medium flex items-center justify-center gap-2"
-                >
-                  <User className="w-5 h-5" />
-                  Login to Portal
-                </button>
-              )}
-            </div>
           </div>
         )}
       </div>

@@ -42,3 +42,4 @@ export const getInformation = async () => {
   const res = await axios.get(`${API_URL}/information`);
   return res.data;
 };
+
