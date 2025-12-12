@@ -14,28 +14,65 @@ export default function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      return "Email is required";
+    }
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+
+    // Password validation
+    if (!password) {
+      return "Password is required";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Run validation
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setLoading(true);
-    const resp = await login(formData.email, formData.password);
+    const resp = await login(
+      formData.email.trim(),
+      formData.password.trim()
+    );
     setLoading(false);
 
     if (resp.success) {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (user.role?.toLowerCase() === "admin") {
-    navigate("/admin/dashboard");
-  } else {
-    navigate("/", { state: { scrollToId: "home" } });
-  }
-
-}
+      if (user.role?.toLowerCase() === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/", { state: { scrollToId: "home" } });
+      }
+    } else {
+      setError(resp.message || "Invalid email or password");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 px-6">
-      
+
       <div className="relative bg-white/70 backdrop-blur-xl p-10 rounded-2xl shadow-xl w-full max-w-md border border-white/40">
 
         {/* Back button */}
@@ -67,7 +104,6 @@ export default function Login() {
               <input
                 type="email"
                 name="email"
-                required
                 onChange={handleChange}
                 placeholder="Enter your email"
                 className="w-full bg-transparent outline-none text-gray-800"
@@ -82,7 +118,6 @@ export default function Login() {
               <input
                 type="password"
                 name="password"
-                required
                 onChange={handleChange}
                 placeholder="Enter your password"
                 className="w-full bg-transparent outline-none text-gray-800"

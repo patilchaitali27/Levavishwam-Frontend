@@ -22,18 +22,55 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Validation function
+  const validateForm = () => {
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+    const confirmPassword = formData.confirmPassword.trim();
+
+    // Name validation
+    if (!name) return "Full name is required";
+    if (name.length < 3) return "Full name must be at least 3 characters long";
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return "Please enter a valid email address";
+
+    // Password validation
+    if (!password) return "Password is required";
+    if (password.length < 6)
+      return "Password must be at least 6 characters long";
+    if (password.includes(" "))
+      return "Password cannot contain spaces";
+
+    // Confirm Password
+    if (!confirmPassword) return "Please confirm your password";
+    if (password !== confirmPassword) return "Passwords do not match";
+
+    return null;
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    // Run validations
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
     setLoading(true);
-    const resp = await signup(formData);
+    const resp = await signup({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      password: formData.password.trim(),
+      confirmPassword: formData.confirmPassword.trim()
+    });
     setLoading(false);
 
     if (resp.success) {
@@ -78,7 +115,6 @@ export default function Signup() {
               <User className="w-5 h-5 text-purple-600" />
               <input
                 name="name"
-                required
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
@@ -95,7 +131,6 @@ export default function Signup() {
               <input
                 type="email"
                 name="email"
-                required
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
@@ -112,7 +147,6 @@ export default function Signup() {
               <input
                 type="password"
                 name="password"
-                required
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Create a password"
@@ -129,7 +163,6 @@ export default function Signup() {
               <input
                 type="password"
                 name="confirmPassword"
-                required
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Re-enter your password"
