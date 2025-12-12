@@ -138,13 +138,13 @@ const EditProfile: React.FC = () => {
     setSuccess("");
     setError("");
 
-    // sanitize DOB
+    
     const dobPayload = form.dob ? new Date(form.dob).toISOString() : null;
 
-    let uploadedPhotoUrl = photoUrl; // use existing if no new upload
+    let uploadedPhotoUrl = photoUrl; 
 
     try {
-      // If a new file is selected, upload it first
+    
       if (selectedFile) {
         const fd = new FormData();
         fd.append("file", selectedFile);
@@ -192,7 +192,6 @@ const EditProfile: React.FC = () => {
         }
       }
 
-      // Now update profile text fields (include ProfilePhotoPath so server persists it)
       const payload: any = {
         Name: form.fullName ?? undefined,
         Email: user && (user as any).email ? (user as any).email : undefined,
@@ -256,7 +255,6 @@ const EditProfile: React.FC = () => {
       return;
     }
 
-    // Confirmation (simple browser confirm - replace with custom modal if you prefer)
     const ok = window.confirm(
       "Are you sure you want to delete your profile photo?"
     );
@@ -438,7 +436,7 @@ const EditProfile: React.FC = () => {
           </div>
         )}
 
-        {/* Photo upload section */}
+     
         <div className="mb-6">
           <label className="font-semibold text-gray-700 text-sm block mb-2">
             Profile Photo
@@ -479,7 +477,7 @@ const EditProfile: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    // quick remove selected file & preview (before upload)
+                   
                     setSelectedFile(null);
                     setPreviewUrl(null);
                     setError("");
@@ -500,7 +498,7 @@ const EditProfile: React.FC = () => {
                   {deleting ? "Deleting…" : "Delete Photo"}
                 </button>
 
-                {/* optional small upload progress indicator */}
+               
                 {uploading && (
                   <div className="text-xs ml-3 text-gray-600">
                     Uploading… {uploadProgress}%

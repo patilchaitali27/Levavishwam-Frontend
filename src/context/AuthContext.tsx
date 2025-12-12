@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   useEffect(() => {
-    // Optional: set axios default header when token is present
+    
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
@@ -65,20 +65,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = resp.data;
       if (data?.isSuccess && data.token) {
         const jwt = data.token as string;
-        // backend already returns userId & name; use that
+       
         const userObj: IUser = {
           userId: data.userId,
           name: data.name,
           role: data.role
         };
 
-        // try to decode email from token if present
         const decoded = decodeJwtPayload(jwt);
         if (decoded && decoded.sub) {
           userObj.email = decoded.sub;
         }
 
-        // save to localStorage
+      
         localStorage.setItem("token", jwt);
         localStorage.setItem("user", JSON.stringify(userObj));
 

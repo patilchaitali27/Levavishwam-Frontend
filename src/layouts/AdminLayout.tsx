@@ -10,7 +10,7 @@ const AdminLayout: React.FC = () => {
       <div className="flex-1 flex flex-col">
         <AdminNavbar />
         
-        {/* IMPORTANT: Outlet renders the inner pages */}
+        
         <main className="flex-1 p-6">
           <Outlet />
         </main>

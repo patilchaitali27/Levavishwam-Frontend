@@ -8,7 +8,7 @@ import { MenuProvider } from "./context/MenuContext"; // ⬅ ADD THIS
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <MenuProvider>        {/* ⬅ WRAP APP */}
+      <MenuProvider>       
         <App />
       </MenuProvider>
     </AuthProvider>

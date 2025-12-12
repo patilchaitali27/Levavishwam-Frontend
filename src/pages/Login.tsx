@@ -18,7 +18,7 @@ export default function Login() {
     const email = formData.email.trim();
     const password = formData.password.trim();
 
-    // Email validation
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
@@ -28,7 +28,7 @@ export default function Login() {
       return "Please enter a valid email address";
     }
 
-    // Password validation
+   
     if (!password) {
       return "Password is required";
     }
@@ -43,7 +43,7 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
-    // Run validation
+    
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -75,7 +75,7 @@ export default function Login() {
 
       <div className="relative bg-white/70 backdrop-blur-xl p-10 rounded-2xl shadow-xl w-full max-w-md border border-white/40">
 
-        {/* Back button */}
+       
         <button
           onClick={() => navigate("/", { state: { scrollToId: "home" } })}
           className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition"
@@ -83,7 +83,7 @@ export default function Login() {
           <ChevronLeft className="w-4 h-4" /> Back to Home
         </button>
 
-        {/* Logo + Title */}
+        
         <div className="text-center mb-6">
           <div className="mx-auto w-14 h-14 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <User className="w-7 h-7 text-white" />
@@ -94,7 +94,7 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Form */}
+       
         <form onSubmit={handleSubmit} className="space-y-5">
 
           <div>
@@ -125,14 +125,14 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Error */}
+          
           {error && (
             <div className="text-red-600 text-sm text-center mt-1 font-medium">
               {error}
             </div>
           )}
 
-          {/* Submit Button */}
+         
           <button
             type="submit"
             disabled={loading}
@@ -142,7 +142,7 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Signup Link */}
+       
         <p className="text-gray-700 text-center text-sm mt-6">
           Don’t have an account?{" "}
           <a
