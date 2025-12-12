@@ -18,9 +18,6 @@ export default function Home() {
   const { menus, loading: menuLoading } = useMenuContext();
   const [pageLoading, setPageLoading] = useState(true);
 
-  // LOG — Does API return menus?
-  console.log("🔥 FRONTEND MENUS:", menus);
-
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
@@ -67,23 +64,63 @@ export default function Home() {
   const renderSection = (path: string) => {
     switch (normalize(path)) {
       case "/carousel":
-        return <section id="carousel"><Carousel /></section>;
+        return (
+          <>
+            <section id="carousel">
+              <Carousel />
+            </section>
+
+            <div className="flex justify-center mt-6 mb-10">
+              <button
+                onClick={scrollToNews}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-md"
+              >
+                <ChevronDown className="w-7 h-7 text-gray-600 animate-bounce" />
+              </button>
+            </div>
+          </>
+        );
+
       case "/news":
-        return <section id="news"><NewsSection /></section>;
+        return (
+          <section id="news">
+            <NewsSection />
+          </section>
+        );
+
       case "/information":
-        return <section id="information"><InformationSection /></section>;
+        return (
+          <section id="about">
+            <InformationSection />
+          </section>
+        );
+
       case "/events":
-        return <section id="events"><EventsSection /></section>;
+        return (
+          <section id="events">
+            <EventsSection />
+          </section>
+        );
+
       case "/downloads":
-        return <section id="downloads"><DownloadsSection /></section>;
+        return (
+          <section id="downloads">
+            <DownloadsSection />
+          </section>
+        );
+
       case "/committee":
-        return <section id="committee"><CommitteeSection /></section>;
+        return (
+          <section id="committee">
+            <CommitteeSection />
+          </section>
+        );
+
       default:
         return null;
     }
   };
 
-  // FIXED LOADER (menus can be empty)
   if (pageLoading || menuLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-white">
@@ -101,17 +138,6 @@ export default function Home() {
           <div key={menu.id}>{renderSection(menu.path)}</div>
         ))}
       </main>
-
-      {menus.some((m) => normalize(m.path) === "/news") && (
-        <div className="flex justify-center -mt-10 mb-10">
-          <button
-            onClick={scrollToNews}
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-sm"
-          >
-            <ChevronDown className="w-6 h-6 text-gray-700" />
-          </button>
-        </div>
-      )}
 
       <Footer />
     </div>

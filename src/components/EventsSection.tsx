@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getEvents } from "../services/homeApi";
+import { useAuth } from "../context/AuthContext";
 
 interface EventItem {
   id: number;
@@ -27,11 +28,7 @@ function getStatusBadge(status: string) {
   };
 
   return (
-    <span
-      className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-        styles[status as keyof typeof styles]
-      }`}
-    >
+    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${styles[status as keyof typeof styles]}`}>
       {labels[status as keyof typeof labels]}
     </span>
   );
@@ -40,6 +37,8 @@ function getStatusBadge(status: string) {
 export default function EventsSection() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [showAll, setShowAll] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
@@ -51,6 +50,11 @@ export default function EventsSection() {
 
   const visibleEvents = showAll ? events : events.slice(0, 2);
 
+  const handleProtected = (callback: () => void) => {
+    if (!isAuthenticated) navigate("/login");
+    else callback();
+  };
+
   return (
     <section id="events" className="py-15 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,6 +63,8 @@ export default function EventsSection() {
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Events</h2>
           <p className="text-gray-600">Upcoming community events and activities</p>
         </div>
+
+        <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-10 rounded-full"></div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {visibleEvents.map((event) => (
@@ -102,15 +108,18 @@ export default function EventsSection() {
                   {event.description}
                 </p>
 
-                <Link
-                  to={`/events/${event.id}`}
-                  state={event}
+                <button
+                  onClick={() =>
+                    handleProtected(() =>
+                      navigate(`/events/${event.id}`, { state: event })
+                    )
+                  }
                   className="mt-4 w-full px-4 py-2.5 border border-blue-600 text-blue-600 hover:bg-blue-50 
                              font-medium rounded-lg transition flex items-center justify-center gap-2"
                 >
                   View Details
                   <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           ))}
@@ -119,7 +128,7 @@ export default function EventsSection() {
         {events.length > 2 && (
           <div className="text-center mt-10">
             <button
-              onClick={() => setShowAll(!showAll)}
+              onClick={() => handleProtected(() => setShowAll(!showAll))}
               className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                        font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
             >
@@ -131,5 +140,4 @@ export default function EventsSection() {
       </div>
     </section>
   );
-
 }

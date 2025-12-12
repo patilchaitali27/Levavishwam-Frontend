@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Calendar, User, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getNews } from "../services/homeApi";
+import { useAuth } from "../context/AuthContext";
 
 interface NewsItem {
   id: number;
@@ -16,25 +17,29 @@ interface NewsItem {
 export default function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [showAll, setShowAll] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await getNews();
         setNews(res);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch {}
     };
     load();
   }, []);
 
   const visibleNews = showAll ? news : news.slice(0, 3);
 
+  const handleProtected = (callback: () => void) => {
+    if (!isAuthenticated) navigate("/login");
+    else callback();
+  };
+
   return (
     <section id="news" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Latest News
@@ -81,16 +86,18 @@ export default function NewsSection() {
                   {item.category}
                 </div>
 
-                {/* FIXED READ MORE BUTTON WITH LINK */}
-                <Link
-                  to={`/news/${item.id}`}
-                  state={item}
+                <button
+                  onClick={() =>
+                    handleProtected(() =>
+                      navigate(`/news/${item.id}`, { state: item })
+                    )
+                  }
                   className="w-full px-4 py-2.5 border border-blue-600 text-blue-600 rounded-lg 
                              hover:bg-blue-50 transition flex items-center justify-center gap-2 font-medium"
                 >
                   Read More
                   <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           ))}
@@ -99,7 +106,9 @@ export default function NewsSection() {
         {news.length > 3 && (
           <div className="text-center mt-10">
             <button
-              onClick={() => setShowAll(!showAll)}
+              onClick={() =>
+                handleProtected(() => setShowAll(!showAll))
+              }
               className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 
                 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
             >
@@ -108,7 +117,6 @@ export default function NewsSection() {
             </button>
           </div>
         )}
-
       </div>
     </section>
   );

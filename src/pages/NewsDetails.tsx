@@ -26,7 +26,6 @@ export default function NewsDetails() {
   useEffect(() => {
     const load = async () => {
       if (!id) return;
-
       if (!dataFromState) {
         try {
           const res = await getNewsById(Number(id));
@@ -34,7 +33,6 @@ export default function NewsDetails() {
         } catch {}
       }
     };
-
     load();
   }, [id]);
 
@@ -42,8 +40,10 @@ export default function NewsDetails() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-
-      <Link to="/" className="flex items-center text-blue-600 hover:underline mb-5">
+      <Link
+        to="/#news"
+        className="flex items-center text-blue-600 hover:underline mb-5"
+      >
         <ArrowLeft className="w-5 h-5 mr-2" />
         Back to News
       </Link>
@@ -74,7 +74,6 @@ export default function NewsDetails() {
         />
       </div>
 
-      {/* SAFE TEXT RENDERING */}
       <div className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
         {news.content}
       </div>

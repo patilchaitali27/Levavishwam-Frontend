@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X, User, LogOut, Search, ChevronDown, Edit } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useMenuContext } from "../context/MenuContext"; // ⬅ Added
+import { useMenuContext } from "../context/MenuContext"; // Added
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
-  const { menus } = useMenuContext(); // ⬅ Dynamic menus from DB
+  const { menus } = useMenuContext(); // Dynamic menus from DB
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -33,11 +33,11 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Convert DB path "/news" → "news"
+  
   const convertPathToId = (path: string) =>
     path.replace("/", "").trim().toLowerCase();
 
-  // Final dynamic nav items (only active + public)
+  
   const dynamicNavItems = menus.map((m) => ({
     id: convertPathToId(m.path),
     label: m.title,

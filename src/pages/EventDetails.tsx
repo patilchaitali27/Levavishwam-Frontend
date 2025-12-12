@@ -40,7 +40,7 @@ export default function EventDetails() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
       <Link
-        to="/"
+        to="/#events"
         className="inline-flex items-center gap-2 text-blue-600 mb-6 hover:underline"
       >
         <ArrowLeft className="w-5 h-5" />
