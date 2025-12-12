@@ -14,6 +14,7 @@ export interface ProfileDto {
 export interface UpdateProfileRequest {
   // fields we keep in the UI form
   fullName?: string;
+  email?:string;
   mobile?: string;
   address?: string;
   dob?: string | null; // 'yyyy-mm-dd' or null

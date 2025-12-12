@@ -88,7 +88,7 @@ export default function Navbar() {
 
   const handleEditProfile = () => {
     setIsProfileDropdownOpen(false);
-    navigate("/edit-profile");
+    navigate("/profile");
   };
 
   const handleLogout = () => {
