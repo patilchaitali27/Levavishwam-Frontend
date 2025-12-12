@@ -62,13 +62,19 @@ const AdminSidebar: React.FC = () => {
         >
           Downloads
         </NavLink>
+        <NavLink
+          to="/admin/user-approvals"
+          className={({ isActive }) => `${base} ${isActive ? active : normal}`}
+        >
+          User Approvals
+        </NavLink>
 
-        <button
+        {/* <button
           type="button"
           className={`${base} ${normal} opacity-60 cursor-not-allowed`}
         >
           User Approvals (coming soon)
-        </button>
+        </button> */}
       </nav>
 
       {/* Footer */}

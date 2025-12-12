@@ -19,6 +19,7 @@ import NewsManagement from "./pages/Admin/NewsManagement";
 import EventManagement from "./pages/Admin/EventManagement";
 import CommitteeManagement from "./pages/Admin/CommitteeManagement";
 import DownloadsManagement from "./pages/Admin/DownloadsManagement";
+import UserApproval from "./pages/Admin/UserApproval";
 export default function App() {
   return (
     <BrowserRouter>
@@ -48,6 +49,8 @@ export default function App() {
             <Route path="events" element={<EventManagement />} />
             <Route path="committee" element={<CommitteeManagement />} />
             <Route path="downloads" element={<DownloadsManagement />} />
+            <Route path="user-approvals" element={<UserApproval />} />
+
 
           </Route>
         </Route>
